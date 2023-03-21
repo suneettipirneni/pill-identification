@@ -56,7 +56,7 @@ for epoch in range(NUM_EPOCHS):
 
     running_loss += loss.item()
 
-print(f"epoch {epoch} loss = {running_loss}")
+  print(f"epoch {epoch} loss = {running_loss}")
 
 
 
