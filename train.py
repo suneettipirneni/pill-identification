@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 BASE_DATA_DIR = os.path.join("data", "ePillID_data")
 NUM_EPOCHS = 25
-NUM_CLASSES = 4092
+NUM_CLASSES = 4902
 BATCH_SIZE = 5
 
 from datasets import SingleImgPillID
