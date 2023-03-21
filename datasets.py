@@ -22,6 +22,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+from typing import Optional, TypedDict
 import numpy as np
 from PIL import Image
 
@@ -41,7 +42,6 @@ import sys
 
 #** data augmentation similar to deep mobile pill**
 from image_augmentators import get_imgaug_sequences
-
 
 class SingleImgPillID(Dataset):
     """
