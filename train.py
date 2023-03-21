@@ -37,8 +37,8 @@ model = vit_b_32(num_classes=NUM_CLASSES)
 optimizer = torch.optim.Adam(model.parameters())
 criterion = nn.CrossEntropyLoss()
 
-running_loss = 0.0
 for epoch in range(NUM_EPOCHS):
+  running_loss = 0.0
   for item in tqdm(train_loader):
     image = item['image']
     label = item['label']
