@@ -54,9 +54,9 @@ for epoch in range(NUM_EPOCHS):
     loss.backward()
     optimizer.step()
 
-    running_loss += loss.item()
+    running_loss += loss.item() * image.size(0)
 
-  print(f"epoch {epoch} loss = {running_loss}")
+  print(f"epoch {epoch} loss = {running_loss / len(train_loader)}")
 
 
 
