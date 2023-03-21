@@ -193,11 +193,13 @@ class SiamesePillID(Dataset):
         img_path = img_row.image_path
         is_ref = img_row.is_ref
 
-        if not os.path.exists(img_path):
-            print("img not found", img_path)
+        path = os.path.join("data", "ePillID_data", "classification_data", img_row.image_path)
+
+        if not os.path.exists(path):
+            print("img not found", path)
             return
 
-        img = Image.open(img_path)
+        img = Image.open(path)
 
         current_img = [np.array(img)]
         if self.do_augmentators:
@@ -297,11 +299,13 @@ class TripletPillID(Dataset):
         img_path = img_row.image_path
         is_ref = img_row.is_ref
 
-        if not os.path.exists(img_path):
-            print("img not found", img_path)
+        path = os.path.join("data", "ePillID_data", "classification_data", img_row.image_path)
+
+        if not os.path.exists(path):
+            print("img not found", path)
             return
 
-        img = Image.open(img_path)
+        img = Image.open(path)
 
         current_img = [np.array(img)]
         if self.do_augmentators:
