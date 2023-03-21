@@ -31,17 +31,19 @@ transform = transforms.Compose([
 train_dataset = SingleImgPillID(df=images_df, label_encoder=label_encoder, transform=transform, train=True)
 
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE)
-
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 model = vit_b_32(num_classes=NUM_CLASSES)
 
 optimizer = torch.optim.Adam(model.parameters())
 criterion = nn.CrossEntropyLoss()
 
+model.to(device)
+
 for epoch in range(NUM_EPOCHS):
   running_loss = 0.0
   for item in tqdm(train_loader):
-    image = item['image']
-    label = item['label']
+    image = item['image'].to(device)
+    label = item['label'].to(device)
     image_name = item['image_name']
     is_ref = item['is_ref']
 
