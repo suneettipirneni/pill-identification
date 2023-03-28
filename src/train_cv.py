@@ -24,8 +24,8 @@ logging.getLogger().setLevel(logging.INFO) # needed for AML
 logger = logging.getLogger(__name__)
 
 # Azure ML
-from azureml.core.run import Run
-run = Run.get_context()
+# from azureml.core.run import Run
+# run = Run.get_context()
 
 # log arguments
 for k, v in vars(args).items():

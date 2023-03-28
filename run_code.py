@@ -7,6 +7,7 @@ import argparse
 from glob import glob
 import torch
 import torch.nn as nn
+import numpy as np
 import torch.optim as optim
 from torchvision import transforms
 from torchvision.models import swin_v2_t
@@ -21,6 +22,8 @@ from train_test import train, test
 import pickle
 import src.arguments as arguments
 import src.train_nocv as train_nocv
+from src.metrics import all_avg_precision
+
 
 NUM_CLASSES = 9804
 args = arguments.cv_parser().parse_args()
@@ -52,7 +55,36 @@ for i, val_csv in enumerate(csv_files):
 
 all_metrics_df = pd.concat(metrics_dfs_list, ignore_index = True)
 
+# files in outputs folder will be uploaded to AML outputs tab
+os.makedirs('outputs', exist_ok=True)
+all_metrics_df.to_csv(os.path.join('outputs', 'metrics.csv'))
 
+
+all_predictions_df = pd.concat(predictions_dfs_list, ignore_index = True)
+
+holdout_predictions_df = all_predictions_df[all_predictions_df.dataset == 'holdout'].copy()
+
+precision_metrics = all_avg_precision(all_predictions_df)
+
+plt = precision_metrics['PR-curve']
+# run.log_image(name='cv_{}_PR-curve'.format(
+#         datetime.datetime.now().strftime("%H%M")
+#         ), plot=plt)
+plt.close()
+
+num_metrics_df = all_metrics_df[~all_metrics_df.name.str.contains('indices|curve')].copy()
+num_metrics_df["value"] = pd.to_numeric(num_metrics_df["value"], errors='coerce')
+
+agg_metrics_df = num_metrics_df.groupby(['dataset', 'name'])['value'].agg([np.mean, np.std])
+agg_metrics_df.to_csv(os.path.join('outputs', 'agg_metrics.csv'))
+
+# for k, v in agg_metrics_df.iterrows():
+#     k = "_".join(k)
+
+    # run.log("{}_mean".format(k), v['mean'])
+    # run.log("{}_std".format(k), v['std'])
+
+all_predictions_df.to_csv(os.path.join('outputs', 'all_eval_predictions.csv'))
 
 
 

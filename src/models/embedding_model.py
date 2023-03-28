@@ -13,11 +13,20 @@ class EmbeddingModel(nn.Module):
         super(EmbeddingModel, self).__init__()
 
         # self.base_model = fast_MPN_COV_wrapper.get_model(arch=network, repr_agg=pooling, num_classes=cont_dims, pretrained=pretrained)
-        self.base_model = swin_v2_t(weights='DEFAULT', dropout=dropout_p)
-        for param in self.base_model.features.parameters():
-            param.requires_grad = False
+        
+        
+        self.base_model = swin_v2_t(weights='DEFAULT')
+        
+        # for param in self.base_model.features.parameters():
+        #     param.requires_grad = False
 
-        self.base_model.head = nn.Sequential(nn.Linear(in_features = 768, out_features=4902))
+        # children = list(self.base_model.children())
+        # for child in self.base_model.children():
+        #     child.requires_grad = False
+
+        # children[-6].requires_grad = True                
+
+        self.base_model.head = nn.Sequential(nn.Linear(in_features = 768, out_features=2048))
         
         self.out_features = cont_dims
         

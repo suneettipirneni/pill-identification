@@ -165,7 +165,7 @@ def run(args):
     run_metrics_list = log_metrics(val_metrics, 'val')
     predictions_dfs_list = []
 
-    from sanitytest_eval import create_eval_dataloaders
+    from src.sanitytest_eval import create_eval_dataloaders
 
     evaluator = MetricEmbeddingEvaluator(model, args.metric_simul_sidepairs_eval,
         sidepairs_agg_method=args.sidepairs_agg, metric_evaluator_type = args.metric_evaluator_type)
