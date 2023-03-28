@@ -17,52 +17,6 @@ from train_test import train, test
 import pickle
 
 
-def create_dataloaders(ref_only_df, cons_train_df, cons_val_df,
-                       label_encoder, torch_transform, labelcol,
-                       batch_size, add_perspective=False,
-                       n_samples_per_class=6):
-    # no zero-shot option for now
-    train_df = pd.concat([ref_only_df] + [cons_train_df], sort = False)
-    train_df = train_df.sample(frac=1.0)
-    val_df = pd.concat([ref_only_df, cons_val_df])
-
-    # Create the loaders
-    train_dataset = SingleImgPillID(train_df, label_encoder,
-                                    train=True,
-                                    transform=torch_transform,
-                                    labelcol=labelcol,
-                                    add_perspective=add_perspective)
-    val_dataset = SingleImgPillID(val_df, label_encoder,
-                                  train=False,
-                                  transform=torch_transform,
-                                  labelcol=labelcol)
-
-    batch_samplers = {
-        'train': BalancedBatchSamplerPillID(train_df, batch_size=batch_size, labelcol=labelcol),
-        'val': BalancedBatchSamplerPillID(val_df, batch_size=batch_size, labelcol=labelcol)
-    }
-
-    val_dataloader, _ = create_eval_dataloaders(
-        cons_val_df, label_encoder, torch_transform,
-        labelcol, 24)
-
-    ref_dataloader, _ = create_eval_dataloaders(
-        ref_only_df, label_encoder, torch_transform,
-        labelcol, 24)
-
-    image_datasets = {'train': train_dataset, 'val': val_dataset}
-
-    print("train_dataset", len(train_dataset), 'val_dataset', len(val_dataset))
-
-    dataloaders = {x: torch.utils.data.DataLoader(
-        image_datasets[x], batch_sampler=batch_samplers[x],
-        num_workers=6,
-        pin_memory=True) for x in ['train', 'val']}
-
-    dataloaders.update({'eval':val_dataloader, 'ref':ref_dataloader}) #keys match eval_model in metric_test_eval
-
-    return dataloaders
-
 def run_main(args):
 
     FOLDS_DIR = os.path.join(args.data_root_dir,'folds/pilltypeid_nih_sidelbls0.01_metric_5folds/base') 
