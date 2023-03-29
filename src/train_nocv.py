@@ -51,9 +51,9 @@ def run(args):
     # run = Run.get_context()
 
     # log arguments if it's not called by train_cv
-    if not hasattr(args, 'folds_csv_dir'):
-        for k, v in vars(args).items():
-            run.tag(k, str(v))
+    # if not hasattr(args, 'folds_csv_dir'):
+    #     for k, v in vars(args).items():
+    #         run.tag(k, str(v))
 
     save_path = os.path.join(args.results_dir, param_str)
     os.makedirs(save_path, exist_ok=True)
@@ -216,7 +216,7 @@ def run(args):
 
         metrics_results, predictions = evaluator.eval_model(device, dataloader, do_pr_metrics=True, add_single_side_eval=True)
 
-        plot_pr_curve(metrics_results['PR-curve'], dataset_name)
+        # plot_pr_curve(metrics_results['PR-curve'], dataset_name)
 
         run_metrics_list += log_metrics(metrics_results, dataset_name)
 

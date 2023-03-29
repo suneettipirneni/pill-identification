@@ -25,7 +25,7 @@ def common_parser():
 
     parser.add_argument("--metric_margin", type=float, default=1.0, help='margin for the contrastive loss in training')
     parser.add_argument("--metric_embedding_dim", type=int, default=2048, help='dimensionality of the embedding feture vector used for the contrastive loss learning')
-    parser.add_argument('--train_with_side_labels', default='0', type=strtobool, help='train with side info i.e. front and back will be treated as different classes (req. CSVs with side labels)')
+    parser.add_argument('--train_with_side_labels', default='1', type=strtobool, help='train with side info i.e. front and back will be treated as different classes (req. CSVs with side labels)')
     parser.add_argument('--metric_simul_sidepairs_eval', default='1', type=strtobool, help='evals holdout and val simulating per pill side img pairs (req. CSVs with side labels)')
     parser.add_argument('--sidepairs_agg', type=str, default="post_mean", choices=['post_mean', 'post_max'], help="aggregation method for embeddings. post_*: agg. after calculating the distance")
     parser.add_argument('--metric_evaluator_type', type=str, default="cosine", choices=['euclidean', 'cosine', 'ann'],
