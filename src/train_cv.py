@@ -69,9 +69,9 @@ holdout_predictions_df = all_predictions_df[all_predictions_df.dataset == 'holdo
 precision_metrics = all_avg_precision(all_predictions_df)
 
 plt = precision_metrics['PR-curve']
-run.log_image(name='cv_{}_PR-curve'.format(
-        datetime.datetime.now().strftime("%H%M")
-        ), plot=plt)
+# run.log_image(name='cv_{}_PR-curve'.format(
+#         datetime.datetime.now().strftime("%H%M")
+#         ), plot=plt)
 plt.close()
 
 num_metrics_df = all_metrics_df[~all_metrics_df.name.str.contains('indices|curve')].copy()
@@ -80,10 +80,10 @@ num_metrics_df["value"] = pd.to_numeric(num_metrics_df["value"], errors='coerce'
 agg_metrics_df = num_metrics_df.groupby(['dataset', 'name'])['value'].agg([np.mean, np.std])
 agg_metrics_df.to_csv(os.path.join('outputs', 'agg_metrics.csv'))
 
-for k, v in agg_metrics_df.iterrows():
-    k = "_".join(k)
+# for k, v in agg_metrics_df.iterrows():
+#     k = "_".join(k)
 
-    run.log("{}_mean".format(k), v['mean'])
-    run.log("{}_std".format(k), v['std'])
+#     run.log("{}_mean".format(k), v['mean'])
+#     run.log("{}_std".format(k), v['std'])
 
 all_predictions_df.to_csv(os.path.join('outputs', 'all_eval_predictions.csv'))

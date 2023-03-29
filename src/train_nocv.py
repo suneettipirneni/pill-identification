@@ -139,7 +139,7 @@ def run(args):
                 run_metrics.append([os.path.split(args.val_imgs_csv)[1], dataset_name, k, pind_str])
 
             elif isinstance(v, (int, float)):
-                run.log("{}_{}".format(dataset_name, k), v)
+                # run.log("{}_{}".format(dataset_name, k), v)
                 run_metrics.append([os.path.split(args.val_imgs_csv)[1], dataset_name, k, v])
 
         return run_metrics
