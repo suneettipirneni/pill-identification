@@ -23,13 +23,13 @@ logging.basicConfig(
 logging.getLogger().setLevel(logging.INFO) # needed for AML
 logger = logging.getLogger(__name__)
 
-# Azure ML
+
+# Azure ML not needed/microsoft stuff
 # from azureml.core.run import Run
 # run = Run.get_context()
-
 # log arguments
-for k, v in vars(args).items():
-    run.tag(k, str(v))
+# for k, v in vars(args).items():
+#     run.tag(k, str(v))
 
 # TODO: fix path issue when data_root_dir is not aboslute path
 assert os.path.isabs(args.data_root_dir)

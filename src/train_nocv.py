@@ -65,21 +65,23 @@ def run(args):
     from sklearn.preprocessing import LabelEncoder
 
     import pickle
-    if not os.path.exists(args.label_encoder):
-        logger.warning(f"Fitting a new label encoder at {args.label_encoder}")
+    # if not os.path.exists(args.label_encoder):
 
-        all_imgs_df = pd.read_csv('../' + args.all_imgs_csv)
+    #running into issues in newton, so pickling.
+    logger.warning(f"Fitting a new label encoder at {args.label_encoder}")
 
-        label_encoder = LabelEncoder()
-        label_encoder.fit(all_imgs_df['label'])
-    
-        pickle.dump(label_encoder, open(args.label_encoder, "wb"))
+    all_imgs_df = pd.read_csv(args.all_imgs_csv)
 
-    else:
-        logger.info(f"Loading label encoder: {args.label_encoder}")
+    label_encoder = LabelEncoder()
+    label_encoder.fit(all_imgs_df['label'])
 
-        with open(args.label_encoder, 'rb') as pickle_file:
-            label_encoder = pickle.load(pickle_file)
+    pickle.dump(label_encoder, open(args.label_encoder, "wb"))
+
+    # else:
+    #     logger.info(f"Loading label encoder: {args.label_encoder}")
+
+    #     with open(args.label_encoder, 'rb') as pickle_file:
+    #         label_encoder = pickle.load(pickle_file)
 
     logger.info(f"label_encoder.classes_={label_encoder.classes_}")    
     logger.info("The label encoder has {} classes.".format(len(label_encoder.classes_)))
