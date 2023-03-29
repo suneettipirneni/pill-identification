@@ -26,7 +26,7 @@ class EmbeddingModel(nn.Module):
 
         # children[-6].requires_grad = True                
 
-        # self.base_model.head = nn.Sequential(nn.Linear(in_features = 768, out_features=2048))
+        self.base_model.head = nn.Sequential(nn.Linear(in_features = 1024, out_features=2048))
         
         self.out_features = cont_dims
         
