@@ -16,7 +16,7 @@ def common_parser():
     parser.add_argument("--dropout", type=float, default=0.0, help='dropout rate in the final layer')
     parser.add_argument("--lr_patience", type=int, default=2)
     parser.add_argument("--lr_factor", type=float, default=0.5, help='factor of decrease in the learning rate')
-    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--batch_size", type=int, default=48)
     parser.add_argument('--max_epochs', type=int, default=300)
     parser.add_argument('--add_persp_aug', default='1', type=strtobool, help='switches to enhaced augmentation with perspective')
 

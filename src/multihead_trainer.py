@@ -312,7 +312,7 @@ def init_mod_dev(args, label_encoder):
     n_classes = len(label_encoder.classes_)
     print(f"n_classes={n_classes}")
 
-    E_model = EmbeddingModel(network=args.appearance_network, pooling=args.pooling, dropout_p=args.dropout, cont_dims=args.metric_embedding_dim, pretrained=True, skip_emb=True)
+    E_model = EmbeddingModel(network=args.appearance_network, pooling=args.pooling, dropout_p=args.dropout, cont_dims=args.metric_embedding_dim, pretrained=True)
 
     model = MultiheadModel(E_model, n_classes, train_with_side_labels=args.train_with_side_labels)
     print(model)
