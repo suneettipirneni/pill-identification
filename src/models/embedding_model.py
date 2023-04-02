@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
-from torchvision.models import swin_v2_b, swin_v2_s, swin_v2_t, vit_b_16
+from torchvision.models import swin_v2_b, swin_v2_s, swin_v2_t
 
 from . import fast_MPN_COV_wrapper
 
@@ -14,14 +14,14 @@ class EmbeddingModel(nn.Module):
 
         # self.base_model = fast_MPN_COV_wrapper.get_model(arch=network, repr_agg=pooling, num_classes=cont_dims, pretrained=pretrained)
         
-        self.base_model = swin_v2_t(weights='DEFAULT', dropout=0.3)         
+        self.base_model = swin_v2_b()             
+        self.base_model.head = nn.Sequential(nn.Linear(in_features = 1024, out_features=2048))
+    
 
-        self.base_model.head = nn.Sequential(nn.Linear(in_features = 768, out_features=2048))
-        
         self.out_features = cont_dims
         
         self.dropout = nn.Dropout(p=dropout_p)
-        if skip_emb:
+        if skip_emb:  
             self.emb = None
         else:
             self.emb = nn.Sequential(
