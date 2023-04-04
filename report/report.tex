@@ -62,7 +62,15 @@ that performed pill identification using a CNN-like architecture.
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
 
-The pills in the dataset are structured in a way that they only ever appear once, making this 
+The pills in the dataset are structured in a way that they only ever appear once, making this a complicated, few-shot classification task. To remedy this, we employ a multihead-loss implemented in~\cite{ePill}.  The loss is defined by:
+\[L_{final} = \lambda_{SCE}L_{SCE} + \lambda_\eta L_\eta + \lambda_\rho L_\rho + \lambda_\Gamma L_\Gamma  \]
+where $L_{SCE}$ is a standard softmax cross-entropy loss, $L_\eta$ the cosine-softmax loss, $L_\rho$ the triplet loss, and $L_\Gamma$ the contrastive loss.
+\\
+The definitions of these are as follows:
+\[L_\eta = \] 
+\[L_\rho = \] 
+\[L_\Gamma =\] 
+
 
 \section{Dataset}
 We will be using the ePillID dataset~\cite{ePill} for this work.  This dataset contains $13,000$ images and $4,902$ different pills.  There are $9,804$ different classes in the dataset, as there are two side to each pill.
