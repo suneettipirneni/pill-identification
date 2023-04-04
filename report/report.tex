@@ -1,0 +1,122 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{iccv}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+
+ \iccvfinalcopy % *** Uncomment this line for the final submission
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+\ificcvfinal\pagestyle{empty}\fi
+
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{UNC COMP 790 Project Proposal}
+
+\author{Suneet Tipirneni\\
+MSCV Student\\
+{\tt\small suneet.tipirneni@knights.ucf.edu}}
+
+\maketitle
+% Remove page # from the first page of camera-ready.
+\ificcvfinal\thispagestyle{empty}\fi
+
+
+\section{Summary}
+
+\section{Strengths}
+
+Describe the problem that you are trying to solve in terms of the following:
+\begin{itemize}
+    \item Problem definition in terms of inputs/outputs.
+    \item The motivation behind the problem.
+    \item The goal of your project.
+\end{itemize}
+
+
+\section{Weaknesses}
+
+Include a brief overview of the related work that covers:
+\begin{itemize}
+    \item Latest work in this area.
+    \item How your approach relates to this prior work.
+\end{itemize}
+
+\section{Future Ideas}
+
+Briefly describe the approach that you plan to use. This should include:
+
+\begin{itemize}
+    \item The high-level overview of your method.
+    \item Reasons why you selected this method.
+    \item More precise technical details related to the approach.
+    \item References to the approaches that your method is built on.
+    \item Technical novelty (if any) in relation to the prior work.
+\end{itemize}
+
+\begin{figure}[t]
+\begin{center}
+\fbox{\rule{0pt}{1.5in} \rule{0.7\linewidth}{0pt}}
+   %\includegraphics[width=0.8\linewidth]{figure1.pdf}
+\end{center}
+   \caption{Optional figure illustrating the high-level idea of your approach or the problem that you are trying to solve.}
+\label{fig:fig1}
+\end{figure}
+
+\section{Conclusion}
+
+Provide details for your experimental setup:
+
+\begin{itemize}
+    \item The experiments that you plan to run.
+    \item What you expect to discover from these experiments (for the proposal and milestone reports).
+    \item Your results and the analysis of those results (for milestone and final reports).
+    \item The datasets that you plan to use (along with a high-level overview of each dataset such as its size, annotations, when it was introduced, etc)
+    \item The motivation why those datasets are suitable for your project.
+\end{itemize}
+
+
+%\begin{figure*}
+%\begin{center}
+%\fbox{\rule{0pt}{2in} \rule{.9\linewidth}{0pt}}
+%%\includegraphics[width=0.8\linewidth]{figure2.pdf}
+%\end{center}
+%   \caption{Optional detailed illustration of your approach.}
+%\label{fig:fig2}
+%\end{figure*}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{c c}
+\hline
+Method & Accuracy \\
+\hline
+Theirs & 0.5 \\
+Yours & 0.75\\
+Ours & \bf 0.9 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Results for your milestone and final reports.}
+\end{table}
+
+
+
+
+{\small
+\bibliographystyle{ieee_fullname}
+\bibliography{egbib}
+}
+
+\end{document}
