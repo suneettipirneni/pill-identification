@@ -4,6 +4,8 @@ data/
 runs/
 .vscode
 
+report.pdf
+
 # LaTeX files
 ## Core latex/pdflatex auxiliary files:
 *.aux
