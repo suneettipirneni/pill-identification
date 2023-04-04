@@ -6,13 +6,15 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage[numbers,compress]{natbib}
 
 % Include other packages here, before hyperref.
 
 % If you comment hyperref and then uncomment it, you should delete
 % egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
 % run, let it finish, and you should be clear).
-\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false,colorlinks=true,allcolors=blue]{hyperref}
+
 
  \iccvfinalcopy % *** Uncomment this line for the final submission
 
@@ -22,69 +24,75 @@
 \begin{document}
 
 %%%%%%%%% TITLE
-\title{UNC COMP 790 Project Proposal}
+\title{UCF CAP 5516 Project Proposal}
 
-\author{Suneet Tipirneni\\
-MSCV Student\\
-{\tt\small suneet.tipirneni@knights.ucf.edu}}
+\author{Ronald Campos\\
+MSCV Program\\
+{\tt\small roncamposj@knights.ucf.edu}
+\and
+Suneet Tipirneni\\
+MSCV Program\\
+{\tt\small  suneet.tipirneni@knights.ucf.edu}
+}
 
 \maketitle
 % Remove page # from the first page of camera-ready.
 \ificcvfinal\thispagestyle{empty}\fi
 
 
-\section{Summary}
+\begin{abstract}
+    As healthcare becomes more democratized, the need to validate potential harmful substances has become more and more important. This is especially true when it comes to medications. We want to propose an alternative way to identify pills by developing
+    a model for identifying pills that relies on the robust and modern transformer architecture.
+\end{abstract}
 
-\section{Strengths}
 
-Describe the problem that you are trying to solve in terms of the following:
+\section{Problem Definition}
+Given an input of an image, our goal is to identity and provide a text output for pills/medications in the image. Having more tools to identify potentially hazardous substances can lead to safer environments especially in the pharmaceutical domain. The end goal of this project is to enable people with a non-pharmaceutical background the ability to identify pills/medications with ease using computer vision.
+
+\section{Related Work}
+
+Our related work is primarily comprised of the existing knowledge of vision transformers and the original paper
+that performed pill identification using a CNN-like architecture.
 \begin{itemize}
-    \item Problem definition in terms of inputs/outputs.
-    \item The motivation behind the problem.
-    \item The goal of your project.
+    \item An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale~\cite{an_imageworth}
+        \item A Low-Shot Fine-Grained Benchmark for Pill Identification~\cite{ePill}
+\end{itemize}
+
+\section{Technical Approach}
+
+Vision transformers do an overall better job with classification. This is due to their holistic approach to analyzing images. Vision transformers employ an attention mechanism that allows them to better apply context to images \cite{an_imageworth}. We believe that using transformers in this space can be an improvement compared to the previous approach which highly utilizes a more traditional convolutional neural network architecture \cite{ePill}.
+
+\section{Dataset}
+We will be using the ePillID dataset~\cite{ePill} for this work.  This dataset contains $13,000$ images and $4,902$ different pills.  There are $9,804$ different classes in the dataset, as there are two side to each pill.
+
+\section{Experiments}
+\begin{itemize}
+
+    \item Different pre-processing techniques will be assessed. Some which will include various arrangements of image transformations, data normalization, and using different patch sizes.
+    
+    \item We will experiment with hyperparameter tuning in order to determine the most favorable set for this task.  Among these, we will test:
+
+    \begin{itemize}
+    
+        \item A varying degree of transformer encoding blocks. 
+
+        \item Using different activation functions.  We will consider activations like ReLU~\cite{relu2010} and GELU~\cite{gelu2016}, which are consistent with the standard architecture of Vision Transformers (ViTs)~\cite{an_imageworth}.  In addition to this, we will also look at the performance of classical approaches, such as Softmax~\cite{softmax}.
+
+        
+    \end{itemize}
+
+    \item Our accuracies will then be compared with the CNN architecture used in~\cite{ePill}.
+    % \item What you expect to discover from these experiments (for the proposal and milestone reports).
+    % \item Your results and the analysis of those results (for milestone and final reports).
+    % \item The datasets that you plan to use (along with a high-level overview of each dataset such as its size, annotations, when it was introduced, etc)
+    % \item The motivation why those datasets are suitable for your project.
 \end{itemize}
 
 
-\section{Weaknesses}
+% \section*{References}
 
-Include a brief overview of the related work that covers:
-\begin{itemize}
-    \item Latest work in this area.
-    \item How your approach relates to this prior work.
-\end{itemize}
+% You should also include references to previous work.
 
-\section{Future Ideas}
-
-Briefly describe the approach that you plan to use. This should include:
-
-\begin{itemize}
-    \item The high-level overview of your method.
-    \item Reasons why you selected this method.
-    \item More precise technical details related to the approach.
-    \item References to the approaches that your method is built on.
-    \item Technical novelty (if any) in relation to the prior work.
-\end{itemize}
-
-\begin{figure}[t]
-\begin{center}
-\fbox{\rule{0pt}{1.5in} \rule{0.7\linewidth}{0pt}}
-   %\includegraphics[width=0.8\linewidth]{figure1.pdf}
-\end{center}
-   \caption{Optional figure illustrating the high-level idea of your approach or the problem that you are trying to solve.}
-\label{fig:fig1}
-\end{figure}
-
-\section{Conclusion}
-
-Provide details for your experimental setup:
-
-\begin{itemize}
-    \item The experiments that you plan to run.
-    \item What you expect to discover from these experiments (for the proposal and milestone reports).
-    \item Your results and the analysis of those results (for milestone and final reports).
-    \item The datasets that you plan to use (along with a high-level overview of each dataset such as its size, annotations, when it was introduced, etc)
-    \item The motivation why those datasets are suitable for your project.
-\end{itemize}
 
 
 %\begin{figure*}
@@ -96,27 +104,27 @@ Provide details for your experimental setup:
 %\label{fig:fig2}
 %\end{figure*}
 
-\begin{table}
-\begin{center}
-\begin{tabular}{c c}
-\hline
-Method & Accuracy \\
-\hline
-Theirs & 0.5 \\
-Yours & 0.75\\
-Ours & \bf 0.9 \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Results for your milestone and final reports.}
-\end{table}
+% \begin{table}
+% \begin{center}
+% \begin{tabular}{c c}
+% \hline
+% Method & Accuracy \\
+% \hline
+% Theirs & 0.5 \\
+% Yours & 0.75\\
+% Ours & \bf 0.9 \\
+% \hline
+% \end{tabular}
+% \end{center}
+% \caption{Results for your milestone and final reports.}
+% \end{table}
 
 
 
 
 {\small
-\bibliographystyle{ieee_fullname}
-\bibliography{egbib}
+\bibliographystyle{unsrt}
+\bibliography{sample}
 }
 
 \end{document}
