@@ -90,6 +90,11 @@ We will be using the ePillID dataset~\cite{ePill} for this work.  This dataset c
     % \item The motivation why those datasets are suitable for your project.
 \end{itemize}
 
+\section{Future Plans}
+
+As shown above we currently achieve what we consider a sub-par accuracy for identification. As a result, we would like to look into methods that can improve the robustness of our apporach. One approach we are considering in the future is the usage of data augmentation. For this task we plan to use pre-existing solution called Cs$^2$. Cs$^2$ is an approach that uses generative models to create data augmentations to an already-existing dataset \cite{cs2}. By incorporating this into our current pipeline we hope that it can allow our model to train and see more variation which can hopefully result in overall better accuracies.  \par
+
+In addition to more powerful data augmentations, we also would like to look into improvements to training the SWIN model. This could involve the un-freezing of specific layers in order for the model to better fit the inputs. We may also investigate other models that may be applicable. This is an area we are actively looking into at the time of writing this. \par 
 
 % \section*{References}
 
