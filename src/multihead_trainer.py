@@ -11,6 +11,7 @@ from sklearn.model_selection import StratifiedKFold
 from tqdm import tqdm
 from collections import defaultdict
 import gc
+from torch.utils.tensorboard import SummaryWriter
 
 DEBUG = False
 
@@ -112,6 +113,7 @@ def hneg_train_model(model, optimizer, scheduler,
                 results_dir,
                 label_encoder,
                 criterion,
+                writer,
                 num_epochs=100,
                 earlystop_patience=7,
                 simul_sidepairs=False,
@@ -288,6 +290,9 @@ def hneg_train_model(model, optimizer, scheduler,
                     scheduler.step()
 
         print()  # end of epoch
+        for k in ['loss', 'metric_loss','ce', 'arcface', 'contrastive', 'triplet']:
+            writer.add_scalar(k, epoch_metrics['val'][k].value)
+
         if stop_training:
             break
 
@@ -383,10 +388,11 @@ def train(ref_only_df,
         val_evaluator = 'metric'
 
     print(f'Will use {val_evaluator} evaluator for validation')
-
+    writer = SummaryWriter()
     model, best_val_metrics = hneg_train_model(model, optimizer,
                              exp_lr_scheduler, device, dataloaders,
                              results_dir, label_encoder, onlinecriterion,
+                             writer,
                              num_epochs=n_epochs, 
                              earlystop_patience=3 * (args.lr_patience + 1),
                              simul_sidepairs=args.metric_simul_sidepairs_eval,

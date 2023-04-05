@@ -16,7 +16,7 @@ from PIL import Image
 import sys
 
 #** data augmentation similar to deep mobile pill**
-from image_augmentators import get_imgaug_sequences
+from src.image_augmentators import get_imgaug_sequences
 
 
 class SingleImgPillID(Dataset):

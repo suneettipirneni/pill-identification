@@ -14,8 +14,8 @@ class EmbeddingModel(nn.Module):
 
         # self.base_model = fast_MPN_COV_wrapper.get_model(arch=network, repr_agg=pooling, num_classes=cont_dims, pretrained=pretrained)
         
-        self.base_model = swin_v2_b()             
-        self.base_model.head = nn.Sequential(nn.Linear(in_features = 1024, out_features=2048))
+        self.base_model = swin_v2_t()             
+        self.base_model.head = nn.Sequential(nn.Linear(in_features = 768, out_features=2048))
     
 
         self.out_features = cont_dims
