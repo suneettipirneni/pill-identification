@@ -98,8 +98,8 @@ L_\Gamma = \frac{1}{N} \sum_{i=1}^N \max(0, d_{pos} - d_{neg} + margin),
 \end{equation}
 where $d_{pos}$ are a postive examples, and $d_{neg}$ negative ones. With $L_\Gamma$, we take $d_{pos}$ and $d_{neg}$ as sample pairs, and our aim is to create a margin between the two sets of classes.
 \subsection{Multi-Head Model}
-In order to implement the triplet and contrastive losses, we need to add additional overhead to our architecture. 
-To compare these two, we use the binary classifier head from ~\cite{repo}.  In the case of the arcface loss, a margin head is used in parallel.
+In order to implement the triplet and contrastive losses, we need to add additional overhead to our embedded transformer architecture. 
+To compare these two, we use the binary classifier head from ~\cite{repo} and pass the output $emb$ from the embedded model.  In the case of the arcface loss, a margin head is used in parallel, which also takes $emb$ as input, along with the target values.
 
 \section{Experiments}
 \begin{itemize}
