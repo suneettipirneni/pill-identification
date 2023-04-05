@@ -58,22 +58,48 @@ that performed pill identification using a CNN-like architecture.
         \item A Low-Shot Fine-Grained Benchmark for Pill Identification~\cite{ePill}
 \end{itemize}
 
+\section{Dataset}
+We will be using the ePillID dataset~\cite{ePill} for this work.  This dataset contains $13,000$ images and $4,902$ different pills.  There are $9,804$ different classes in the dataset, as there are two side to each pill.
+
 \section{Method}
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
+We attempt to adapt the model architecture from ~\cite{ePill}, by using a Transformer backbone in place of a CNN. 
+Transformers have been shown to outperform CNNs in classification tasks. As such, we see their use for Fine-Grained Visual Categorization (FGVC) not only a suitable alternative, but one that could help improve overall accuracies of these models.
 
-The pills in the dataset are structured in a way that they only ever appear once, making this a complicated, few-shot classification task. To remedy this, we employ a multihead-loss implemented in~\cite{ePill}.  The loss is defined by:
-\[L_{final} = \lambda_{SCE}L_{SCE} + \lambda_\eta L_\eta + \lambda_\rho L_\rho + \lambda_\Gamma L_\Gamma  \]
-where $L_{SCE}$ is a standard softmax cross-entropy loss, $L_\eta$ the cosine-softmax loss, $L_\rho$ the triplet loss, and $L_\Gamma$ the contrastive loss.
-\\
-The definitions of these are as follows:
-\[L_\eta = \] 
-\[L_\rho = \] 
-\[L_\Gamma =\] 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{transformer-head.png}
+    \caption{The architecture closely resembles the approach used by ~\cite{repo}. Instead of using a CNN backbone for feature extraction, we experiment with a Transformer.}
+    \label{fig:t_head}
+\end{figure}
 
-
-\section{Dataset}
-We will be using the ePillID dataset~\cite{ePill} for this work.  This dataset contains $13,000$ images and $4,902$ different pills.  There are $9,804$ different classes in the dataset, as there are two side to each pill.
+\subsection{Losses}
+The pill images in the dataset are structured in a way that they only ever appear once during training or testing, making this a complicated, few-shot classification task. To remedy this, we employ the multihead-loss implemented in~\cite{ePill}.  The loss is defined by:
+\begin{equation}
+L_{final} = \lambda_{SCE}L_{SCE} + \lambda_\eta L_\eta + \lambda_\rho L_\rho + \lambda_\Gamma L_\Gamma,
+\end{equation}
+where $L_{SCE}$ is a standard softmax cross-entropy loss, $L_\eta$ the arcface loss, $L_\rho$ the triplet loss, and $L_\Gamma$ the contrastive loss. The definitions of these are as follows:
+\subsubsection{Arcface Loss}
+\begin{equation}
+L_\eta = -\log \frac{e^{s\cdot \text{cos}(\theta_{y_i})}}{e^{s\cdot \text{cos}(\theta_{y_i})} + \sum_{j=1, j\neq y_i}^N e^{s\cdot \text{cos}(\theta_j)}},
+\end{equation}
+where $\theta_{yi}$ is the angle between the weight vector $W_j$ of the true class $y_i$, and the feature $x_i$. $s$ is a scaling factor. The goal of $L_\eta$ is to maximize 
+the margin and provide confidence scores between different classes. 
+\subsubsection{Triplet Loss}
+\begin{equation}
+    L_\rho = \sum_{i=1}^{N}\left[\left||f\left(x_{i}^{a}\right)-f\left(x_{i}^{p}\right)\right||_{2}^{2}-\left||f\left(x_{i}^{a}\right)-f\left(x_{i}^{n}\right)\right||_{2}^{2}+\alpha\right]_{+},
+\end{equation}
+where $x_i^a$, $x_i^p$, and $x_i^n$ are the respective anchor, positive, and negative samples, and $f(\cdot)$ is an embedding function function. The goal of $L_\rho$ is to create an embedding space where $x_i^a$ and $x_i^p$ are closely related points in that space. Additionally, 
+we want to maximize the distance between $x_i^a$ and $x_i^n$ in that space.
+\subsubsection{Contrastive Loss}
+\begin{equation}
+L_\Gamma = \frac{1}{N} \sum_{i=1}^N \max(0, d_{pos} - d_{neg} + margin),
+\end{equation}
+where $d_{pos}$ are a postive examples, and $d_{neg}$ negative ones. With $L_\Gamma$, we take $d_{pos}$ and $d_{neg}$ as sample pairs, and our aim is to create a margin between the two sets of classes.
+\subsection{Multi-Head Model}
+In order to implement the triplet and contrastive losses, we need to add additional overhead to our architecture. 
+To compare these two, we use the binary classifier head from ~\cite{repo}.  In the case of the arcface loss, a margin head is used in parallel.
 
 \section{Experiments}
 \begin{itemize}
