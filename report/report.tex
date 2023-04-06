@@ -98,32 +98,21 @@ we want to maximize the distance between $x_i^a$ and $x_i^n$ in that space.
 L_\Gamma = \frac{1}{N} \sum_{i=1}^N \max(0, d_{pos} - d_{neg} + margin),
 \end{equation}
 where $d_{pos}$ are a postive examples, and $d_{neg}$ negative ones. With $L_\Gamma$, we take $d_{pos}$ and $d_{neg}$ as sample pairs, and our aim is to create a margin between the two sets of classes.
+
 \subsection{Multi-Head Model}
 In order to implement the triplet and contrastive losses, we need to add additional overhead to our embedded transformer architecture. 
 To compare these two, we use the binary classifier head from ~\cite{repo} and pass the output $emb$ from the embedded model.  In the case of the arcface loss, a margin head is used in parallel, which also takes $emb$ as input, along with the target values.
 
 \section{Experiments}
-\begin{itemize}
 
-    \item Different pre-processing techniques will be assessed. Some which will include various arrangements of image transformations, data normalization, and using different patch sizes.
     
-    \item We will experiment with hyperparameter tuning in order to determine the most favorable set for this task.  Among these, we will test:
+Our models are trained for 300 epochs, with a batch size of 48, and with an initial learning rate of $0.0001$.
+We also employ a learning rate scheduler, which decreases the learning rate by a factor of $\frac{1}{2}$ every time there is a plateau in the GAP score.  We conduct our experiments with
+ either an Nvidia V100 or Nvidia RTX 3080 Ti GPU.
+\\
 
-    \begin{itemize}
-    
-        \item A varying degree of transformer encoding blocks. 
-
-        \item Using different activation functions.  We will consider activations like ReLU~\cite{relu2010} and GELU~\cite{gelu2016}, which are consistent with the standard architecture of Vision Transformers (ViTs)~\cite{an_imageworth}.  In addition to this, we will also look at the performance of classical approaches, such as Softmax~\cite{softmax}.
-
-        
-    \end{itemize}
-
-    \item Our accuracies will then be compared with the CNN architecture used in~\cite{ePill}.
-    % \item What you expect to discover from these experiments (for the proposal and milestone reports).
-    % \item Your results and the analysis of those results (for milestone and final reports).
-    % \item The datasets that you plan to use (along with a high-level overview of each dataset such as its size, annotations, when it was introduced, etc)
-    % \item The motivation why those datasets are suitable for your project.
-\end{itemize}
+Originally, we attempted to train our data using a ViT base-16 Transformer ~\cite{an_imageworth}. We quickly found that our data was too small in size for an architecture of this nature, 
+and shifted to a Swin v2 Tiny Transformer ~\cite{swinv2}.
 
 \section{Preliminary Analysis}
 
@@ -138,8 +127,8 @@ Compared to the results given in the paper this research is based on, our result
     \multicolumn{1}{|c|}{Swin\_v2*} & \multicolumn{1}{c|}{46.83} & \multicolumn{1}{c|}{71.54} & \multicolumn{1}{c|}{77.05} & 65.18 \\ \midrule
     \multicolumn{1}{|c|}{Swin\_v2}  & \multicolumn{1}{c|}{7.73}  & \multicolumn{1}{c|}{32.45} & \multicolumn{1}{c|}{28.67} & 15.65 \\ \bottomrule
     \end{tabular}
-    \end{table}
-
+\end{table}
+\newpage
 \section{Future Plans}
 
 As shown above we currently achieve what we consider a sub-par accuracy for identification. As a result, we would like to look into methods that can improve the robustness of our apporach. One approach we are considering in the future is the usage of data augmentation. For this task we plan to use pre-existing solution called Cs$^2$. Cs$^2$ is an approach that uses generative models to create data augmentations to an already-existing dataset \cite{cs2}. By incorporating this into our current pipeline we hope that it can allow our model to train and see more variation which can hopefully result in overall better accuracies.  \par
