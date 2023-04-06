@@ -289,9 +289,9 @@ def hneg_train_model(model, optimizer, scheduler,
                 else:
                     scheduler.step()
 
-        print()  # end of epoch
-        for k in ['loss', 'metric_loss','ce', 'arcface', 'contrastive', 'triplet']:
-            writer.add_scalar(k, epoch_metrics['val'][k].value)
+                print()  # end of epoch
+                for k in ['loss', 'metric_loss','ce', 'arcface', 'contrastive', 'triplet']:
+                    writer.add_scalar(f'{k}/epoch', epoch_metrics['val'][k].value, epoch)
 
         if stop_training:
             break
