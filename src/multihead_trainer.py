@@ -240,6 +240,11 @@ def hneg_train_model(model, optimizer, scheduler,
                 epoch_metrics.add(phase, prefix + 'pw-avg-precision', precision_metrics['avg-precision'], 1)
                 # run.log('{}_{}'.format(phase, prefix + 'pw-avg-precision'), precision_metrics['avg-precision'])
 
+            if phase == 'val':
+                print()  # end of epoch
+                for k in ['loss', 'metric_loss','ce', 'arcface', 'contrastive', 'triplet']:
+                    writer.add_scalar(f'{k}/epoch', epoch_metrics['val'][k].value, epoch)
+                    
             # pandas DataFrame in evaluator has memory leak
             checkpoint = 15
             if phase == 'val' and epoch % checkpoint == 0:
@@ -289,9 +294,7 @@ def hneg_train_model(model, optimizer, scheduler,
                 else:
                     scheduler.step()
 
-                print()  # end of epoch
-                for k in ['loss', 'metric_loss','ce', 'arcface', 'contrastive', 'triplet']:
-                    writer.add_scalar(f'{k}/epoch', epoch_metrics['val'][k].value, epoch)
+        print()  # end of epoch
 
         if stop_training:
             break
