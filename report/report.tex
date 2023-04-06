@@ -7,6 +7,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[numbers,compress]{natbib}
+\usepackage{booktabs}
 
 % Include other packages here, before hyperref.
 
@@ -127,6 +128,17 @@ To compare these two, we use the binary classifier head from ~\cite{repo} and pa
 \section{Preliminary Analysis}
 
 Compared to the results given in the paper this research is based on, our results fall behind in all of the metrics.   \par
+
+\begin{table}[h]
+    \begin{tabular}{@{}|ccccc|@{}}
+    \toprule
+    \multicolumn{1}{|c|}{Model}     & \multicolumn{1}{c|}{GAP}   & \multicolumn{1}{c|}{GAP@1} & \multicolumn{1}{c|}{MAP}   & MAP@1 \\ \midrule
+    \multicolumn{5}{|c|}{\textbf{Multi-head Metric Learning: Both-sides input}}                                                    \\ \midrule
+    \multicolumn{1}{|c|}{ResNet50}  & \multicolumn{1}{c|}{58.75} & \multicolumn{1}{c|}{80.26} & \multicolumn{1}{c|}{83.51} & 74.28 \\ \midrule
+    \multicolumn{1}{|c|}{Swin\_v2*} & \multicolumn{1}{c|}{46.83} & \multicolumn{1}{c|}{71.54} & \multicolumn{1}{c|}{77.05} & 65.18 \\ \midrule
+    \multicolumn{1}{|c|}{Swin\_v2}  & \multicolumn{1}{c|}{7.73}  & \multicolumn{1}{c|}{32.45} & \multicolumn{1}{c|}{28.67} & 15.65 \\ \bottomrule
+    \end{tabular}
+    \end{table}
 
 \section{Future Plans}
 
