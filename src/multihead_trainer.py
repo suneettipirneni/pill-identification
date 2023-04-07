@@ -19,6 +19,17 @@ DEBUG = False
 # from azureml.core.run import Run
 # run = Run.get_context()
 
+# TODO: consolidate logid
+def name_for_model_instance(args, add_timestamp=True):
+    param_str = "lr{}_dr{}_lrpatience{}_lrfactor{}_{}".format(
+        args.init_lr, args.dropout, args.lr_patience,
+        args.lr_factor, args.appearance_network)
+
+    if add_timestamp:
+        param_str += "_" + datetime.datetime.now().strftime("%Y%m%d%H%M")
+
+    return param_str
+
 def get_current_lr(optimizer):
     for g in optimizer.param_groups:
         return g['lr']
@@ -34,10 +45,13 @@ res_std = [0.229, 0.224, 0.225]
 
 torch_transform = transforms.Compose([
     transforms.ToTensor(),
+    transforms.RandomResizedCrop(224),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
     transforms.Normalize(res_mean, res_std)
 ])
 
 def build_logid_string(args, add_timestamp=True):
+
     scratch = ("-scratch" if args.from_scratch else "")
     # extd = ("_" + extend_ver) if args.do_appid else ""
     extd = ("_") if args.do_appid else ""
@@ -114,13 +128,15 @@ def hneg_train_model(model, optimizer, scheduler,
                 label_encoder,
                 criterion,
                 writer,
+                args,
                 num_epochs=100,
                 earlystop_patience=7,
                 simul_sidepairs=False,
                 train_with_side_labels=True,
                 sidepairs_agg='post_mean',
                 metric_evaluator_type='euclidean',
-                val_evaluator='metric'
+                val_evaluator='metric',
+                
                 ):
 
     since = time.time()
@@ -293,6 +309,9 @@ def hneg_train_model(model, optimizer, scheduler,
                     scheduler.step(-1.0 * epoch_metrics['val']['micro-ap'].value)
                 else:
                     scheduler.step()
+                
+
+                torch.save(model.state_dict(),os.path.join('classification_results',f'{epoch}.pth'))
 
         print()  # end of epoch
 
@@ -396,12 +415,14 @@ def train(ref_only_df,
                              exp_lr_scheduler, device, dataloaders,
                              results_dir, label_encoder, onlinecriterion,
                              writer,
+                             args,
                              num_epochs=n_epochs, 
                              earlystop_patience=3 * (args.lr_patience + 1),
                              simul_sidepairs=args.metric_simul_sidepairs_eval,
                              sidepairs_agg=args.sidepairs_agg,
                              train_with_side_labels=args.train_with_side_labels,
                              metric_evaluator_type=args.metric_evaluator_type,
-                             val_evaluator=val_evaluator)
+                             val_evaluator=val_evaluator
+                             )
 
     return model, best_val_metrics
