@@ -55,23 +55,23 @@ Given an input of an image, our goal is to identity and provide a text output fo
 Our related work is primarily comprised of the existing knowledge of vision transformers and the original paper
 that performed pill identification using a CNN-like architecture.
 \begin{itemize}
-    \item An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale~\cite{an_imageworth}
-        \item A Low-Shot Fine-Grained Benchmark for Pill Identification~\cite{ePill}
+    \item An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale \cite{an_imageworth}
+        \item A Low-Shot Fine-Grained Benchmark for Pill Identification \cite{ePill}
 \end{itemize}
 
 \section{Dataset}
-We will be using the ePillID dataset~\cite{ePill} for this work.  This dataset contains $13,000$ images and $4,902$ different pills.  There are $9,804$ different classes in the dataset, as there are two side to each pill.
+We will be using the ePillID dataset \cite{ePill} for this work.  This dataset contains $13,000$ images and $4,902$ different pills.  There are $9,804$ different classes in the dataset, as there are two side to each pill.
 
 \section{Method}
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
-We attempt to adapt the model architecture from ~\cite{ePill}, by using a Transformer backbone in place of a CNN. 
+We attempt to adapt the model architecture from \cite{ePill}, by using a Transformer backbone in place of a CNN. 
 Transformers have been shown to outperform CNNs in classification tasks. As such, we see their use for Fine-Grained Visual Categorization (FGVC) not only a suitable alternative, but one that could help improve overall accuracies of these models.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=.5\textwidth]{transformer-head.png}
-    \caption{The architecture closely resembles the approach used by ~\cite{repo}. Instead of using a CNN backbone for feature extraction, we experiment with a Transformer.}
+    \caption{The architecture closely resembles the approach used by \cite{repo}. Instead of using a CNN backbone for feature extraction, we experiment with a Transformer.}
     \label{fig:t_head}
 \end{figure}
 
@@ -80,13 +80,17 @@ The pill images in the dataset are structured in a way that they only ever appea
 \begin{equation}
 L_{final} = \lambda_{SCE}L_{SCE} + \lambda_\eta L_\eta + \lambda_\rho L_\rho + \lambda_\Gamma L_\Gamma,
 \end{equation}
-where $L_{SCE}$ is a standard softmax cross-entropy loss, $L_\eta$ the arcface loss, $L_\rho$ the triplet loss, and $L_\Gamma$ the contrastive loss. The definitions of these are as follows:
+where $L_{SCE}$ is a standard softmax cross-entropy loss, $L_\eta$ the arcface loss \cite{arc}, $L_\rho$ the triplet loss \cite{triplet}, and $L_\Gamma$ the contrastive loss \cite{contrast}. 
+$\lambda$, $\lambda_\eta$, $\lambda_\rho$, $\lambda_\Gamma$ are just weights for the losses. The definitions of these are as follows:
+
+
+
 \subsubsection{Arcface Loss}
 \begin{equation}
 L_\eta = -\log \frac{e^{s\cdot \text{cos}(\theta_{y_i})}}{e^{s\cdot \text{cos}(\theta_{y_i})} + \sum_{j=1, j\neq y_i}^N e^{s\cdot \text{cos}(\theta_j)}},
 \end{equation}
 where $\theta_{yi}$ is the angle between the weight vector $W_j$ of the true class $y_i$, and the feature $x_i$. $s$ is a scaling factor. The goal of $L_\eta$ is to maximize 
-the margin and provide confidence scores between different classes. 
+the margin and provide confidence scores between different classes.
 \subsubsection{Triplet Loss}
 \begin{equation}
     L_\rho = \sum_{i=1}^{N}\left[\left||f\left(x_{i}^{a}\right)-f\left(x_{i}^{p}\right)\right||_{2}^{2}-\left||f\left(x_{i}^{a}\right)-f\left(x_{i}^{n}\right)\right||_{2}^{2}+\alpha\right]_{+},
@@ -101,41 +105,69 @@ where $d_{pos}$ are a postive examples, and $d_{neg}$ negative ones. With $L_\Ga
 
 \subsection{Multi-Head Model}
 In order to implement the triplet and contrastive losses, we need to add additional overhead to our embedded transformer architecture. 
-To compare these two, we use the binary classifier head from ~\cite{repo} and pass the output $emb$ from the embedded model.  In the case of the arcface loss, a margin head is used in parallel, which also takes $emb$ as input, along with the target values.
+To compare these two, we use the binary classifier head from \cite{repo} and pass the output $emb$ from the embedded model.  In the case of the arcface loss, a margin head is used in parallel, which also takes $emb$ as input, along with the target values.
 
 \section{Experiments}
 
     
 Our models are trained for 300 epochs, with a batch size of 48, and with an initial learning rate of $0.0001$.
-We also employ a learning rate scheduler, which decreases the learning rate by a factor of $\frac{1}{2}$ every time there is a plateau in the GAP score.  We conduct our experiments with
+We also employ a learning rate scheduler, which decreases the learning rate by a factor of $\frac{1}{2}$ every time there is a plateau in the GAP score.  
+The values for $\lambda$, $\lambda_\eta$, $\lambda_\rho$, and $\lambda_\Gamma$ are $1.0,0.1,1.0$ and $1.0$ respectively. These were empirically tested by \cite{ePill} and still used here.
+We conduct our experiments with
  either an Nvidia V100 or Nvidia RTX 3080 Ti GPU.
 \\
 
-Originally, we attempted to train our data using a ViT base-16 Transformer ~\cite{an_imageworth}. We quickly found that our data was too small in size for an architecture of this nature, 
-and shifted to a Swin v2 Tiny Transformer ~\cite{swinv2}.
+Originally, we attempted to train our data using a ViT base-16 Transformer \cite{an_imageworth}. We quickly found that our data was too small in size for an architecture of this nature, 
+and shifted to a Swin v2 Tiny Transformer \cite{swinv2}.
 
 \section{Preliminary Analysis}
 
 Compared to the results given in the paper this research is based on, our results fall behind in all of the metrics.   \par
 
 \begin{table}[h]
-    \begin{tabular}{@{}|ccccc|@{}}
-    \toprule
-    \multicolumn{1}{|c|}{Model}     & \multicolumn{1}{c|}{GAP}   & \multicolumn{1}{c|}{GAP@1} & \multicolumn{1}{c|}{MAP}   & MAP@1 \\ \midrule
-    \multicolumn{5}{|c|}{\textbf{Multi-head Metric Learning: Both-sides input}}                                                    \\ \midrule
-    \multicolumn{1}{|c|}{ResNet50}  & \multicolumn{1}{c|}{58.75} & \multicolumn{1}{c|}{80.26} & \multicolumn{1}{c|}{83.51} & 74.28 \\ \midrule
-    \multicolumn{1}{|c|}{Swin\_v2*} & \multicolumn{1}{c|}{46.83} & \multicolumn{1}{c|}{71.54} & \multicolumn{1}{c|}{77.05} & 65.18 \\ \midrule
-    \multicolumn{1}{|c|}{Swin\_v2}  & \multicolumn{1}{c|}{7.73}  & \multicolumn{1}{c|}{32.45} & \multicolumn{1}{c|}{28.67} & 15.65 \\ \bottomrule
+    \caption{* denotes the use of a pretrained model.  + denotes models which have an extra embedding layer added to the transformer output.}
+
+    \begin{tabular}{|ccccc|}
+    \hline
+    \multicolumn{1}{|c|}{Model}       & \multicolumn{1}{c|}{GAP}   & \multicolumn{1}{c|}{GAP@1} & \multicolumn{1}{c|}{MAP}   & MAP@1 \\ \hline
+    \multicolumn{5}{|c|}{\textbf{Multi-head Metric Learning: Both-sides input}}                                                      \\ \hline
+    \multicolumn{1}{|c|}{ResNet50}    & \multicolumn{1}{c|}{58.75} & \multicolumn{1}{c|}{80.26} & \multicolumn{1}{c|}{83.51} & 74.28 \\ \hline
+    \multicolumn{1}{|c|}{Swin\_v2 *+} & \multicolumn{1}{c|}{46.83} & \multicolumn{1}{c|}{71.54} & \multicolumn{1}{c|}{77.05} & 65.18 \\ \hline
+    \multicolumn{1}{|c|}{Swin-v2 *}   & \multicolumn{1}{c|}{42.70} & \multicolumn{1}{c|}{61.89} & \multicolumn{1}{c|}{73.36} & 58.95 \\ \hline
+    \multicolumn{1}{|c|}{Swin\_v2 +}  & \multicolumn{1}{c|}{7.73}  & \multicolumn{1}{c|}{32.45} & \multicolumn{1}{c|}{28.67} & 15.65 \\ \hline
     \end{tabular}
+    \label{tab:results}
 \end{table}
-\newpage
+Our results lead us to believe that the best configuration for Swin v2 Tiny is when we use both the pre-trained model, and add an extra layer of embedding.
+The reason our extra layer of embedding improves learning, is likely due to the nature of the problem.  The embedding layer is comprised of two linear layers, one batch normalization layer after the first linear layer, a ReLU operation, and a final tanh activation. 
+The non-linearity from this tanh activation allows us to model the complex relationship between anchor and positive images, helping us with computing our losses. 
+\\
+
+We can see from our results in Figure \ref{fig:loss_graphs} that the triplet and contrastive losses converge at around epoch $75$. We think this is because the losses for these two are measured similarly.  These both use a binary head classifier that
+measure euclidian distances between anchor, positive, and negative images (in the cases of the triplet loss). \cite{triplet}\cite{contrast} 
+In the case of arcface, its loss decreased much slower than the rest of the losses, almost in a linear manner. The overall loss began at around $14$ and finished at around $4$. Finding a method which further improves the performance of both the contrastive and triplet
+loss should help improve the overall loss and performance. 
+
+
 \section{Future Plans}
 
 As shown above we currently achieve what we consider a sub-par accuracy for identification. As a result, we would like to look into methods that can improve the robustness of our apporach. One approach we are considering in the future is the usage of data augmentation. For this task we plan to use pre-existing solution called Cs$^2$. Cs$^2$ is an approach that uses generative models to create data augmentations to an already-existing dataset \cite{cs2}. By incorporating this into our current pipeline we hope that it can allow our model to train and see more variation which can hopefully result in overall better accuracies.  \par
 
 In addition to more powerful data augmentations, we also would like to look into improvements to training the SWIN model. This could involve the un-freezing of specific layers in order for the model to better fit the inputs. We may also investigate other models that may be applicable. This is an area we are actively looking into at the time of writing this. \par 
 
-% \section*{References}
+\newpage
+\onecolumn
+\begin{figure}[h!]
+    \begin{tabular}{cc}
+        \includegraphics[width=.5\textwidth]{../loss_imgs/ce.png}&\includegraphics[width=.5\textwidth]{../loss_imgs/arc.png}\\
+        \includegraphics[width=.5\textwidth]{../loss_imgs/triplet.png}&\includegraphics[width=.5\textwidth]{../loss_imgs/cont.png}\\
+        \multicolumn{2}{c}{\includegraphics[width=.5\textwidth]{../loss_imgs/overall.png}}
+    \end{tabular}
+    \caption{The figure shows each of the individual losses from our experiment, as well as their sum (overall loss)}    
+    \label{fig:loss_graphs}
+
+\end{figure}
+\twocolumn
 
 % You should also include references to previous work.
 
