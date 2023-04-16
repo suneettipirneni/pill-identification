@@ -14,7 +14,11 @@ class EmbeddingModel(nn.Module):
 
         # self.base_model = fast_MPN_COV_wrapper.get_model(arch=network, repr_agg=pooling, num_classes=cont_dims, pretrained=pretrained)
         
-        self.base_model = swin_v2_t(weights='DEFAULT',dropout=0.5)             
+        self.base_model = swin_v2_t(weights='DEFAULT',dropout=0.5)
+        for name, param in self.base_model.named_parameters():
+            if not name.startswith('head'):
+                param.requires_grad = False
+
         self.base_model.head = nn.Sequential(nn.Linear(in_features = 768, out_features=2048))
     
 
@@ -25,8 +29,10 @@ class EmbeddingModel(nn.Module):
             self.emb = None
         else:
             self.emb = nn.Sequential(
-                nn.Linear(cont_dims, middle),
-                nn.BatchNorm1d(middle, affine=True),
+                nn.Linear(cont_dims, middle * 2),
+                # nn.BatchNorm1d(middle, affine=True),
+                nn.ReLU(inplace=True),
+                nn.Linear(middle * 2, middle),
                 nn.ReLU(inplace=True),
                 nn.Linear(middle, cont_dims),
                 nn.Tanh()
