@@ -1,6 +1,6 @@
-import sys
-from pathlib import Path
-sys.path.append(str(Path().parent))
+# import sys
+# from pathlib import Path
+# sys.path.append(str(Path().parent))
 
 import os
 import argparse
