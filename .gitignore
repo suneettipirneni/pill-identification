@@ -3,7 +3,7 @@ __pycache__/
 data/
 runs/
 .vscode
-
+classification_results/
 report.pdf
 
 # LaTeX files

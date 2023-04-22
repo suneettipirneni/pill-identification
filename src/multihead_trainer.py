@@ -45,8 +45,8 @@ res_std = [0.229, 0.224, 0.225]
 
 torch_transform = transforms.Compose([
     transforms.ToTensor(),
-    transforms.RandomResizedCrop(224),
-    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+    # transforms.RandomResizedCrop(224),
+    # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
     transforms.Normalize(res_mean, res_std)
 ])
 
@@ -344,8 +344,11 @@ def init_mod_dev(args, label_encoder):
     model = MultiheadModel(E_model, n_classes, train_with_side_labels=args.train_with_side_labels)
     print(model)
 
-    if args.load_mod:
-        model.load_state_dict(torch.load(args.load_mod))
+    # if args.load_mod:
+        # model.load_state_dict(torch.load(args.load_mod))
+    # model.load_state_dict(torch.load('data/ePillID_data/classification_results/model_dict.pth'), strict=False)
+
+    print(model)
 
     model.to(device)
 
