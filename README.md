@@ -34,12 +34,11 @@ python train.py --supress_warnings --max_epochs 100
 
 ### License
 
-We have used this codebase for our implementation: https://github.com/usuyama/ePillID-benchmark
+We have used [***this codebase***](https://github.com/usuyama/ePillID-benchmark) for our implementation and modified it for the purposes of this project
 
-It has been modified for the purposes of this project
+A copy of the license is provided below:
 
-A copy of the license is provided below
-
+```
 The MIT License
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -58,3 +57,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+```
