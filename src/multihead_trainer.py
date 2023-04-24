@@ -344,9 +344,8 @@ def init_mod_dev(args, label_encoder):
     model = MultiheadModel(E_model, n_classes, train_with_side_labels=args.train_with_side_labels)
     print(model)
 
-    # if args.load_mod:
-        # model.load_state_dict(torch.load(args.load_mod))
-    # model.load_state_dict(torch.load('data/ePillID_data/classification_results/model_dict.pth'), strict=False)
+
+    model.load_state_dict(torch.load('data/ePillID_data/classification_results/model_dict.pth'), strict=False)
 
     print(model)
 
