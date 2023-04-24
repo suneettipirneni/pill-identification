@@ -2,6 +2,7 @@ venv/
 __pycache__/
 data/
 runs/
+classification_results/
 
 report.pdf
 
