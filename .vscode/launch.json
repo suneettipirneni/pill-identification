@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["--max_epochs", "2","--supress_warnings"],
+            "args": ["--max_epochs", "100","--supress_warnings"],
             "console": "integratedTerminal",
             "justMyCode": true
         }
