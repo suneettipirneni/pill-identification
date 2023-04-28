@@ -65,13 +65,15 @@ We will be using the ePillID dataset \cite{ePill} for this work.  This dataset c
 \section{Method}
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
-We attempt to adapt the model architecture from \cite{ePill}, by using a Transformer backbone in place of a CNN. 
-Transformers have been shown to outperform CNNs in classification tasks. As such, we see their use for Fine-Grained Visual Categorization (FGVC) not only a suitable alternative, but one that could help improve overall accuracies of these models.
+We attempt to adapt the model architecture from \cite{ePill}, by using a Transformer encoder in place of the regular embedding layer. The multi-head attention
+mechanism of the Transformer encoder should make the model more effective at learning the fine-grained details of the pill images. As such, we see its use for 
+Fine-Grained Visual Categorization (FGVC) not only a suitable alternative, but one that could help improve overall performance of these models.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=.5\textwidth]{transformer-head.png}
-    \caption{The architecture closely resembles the approach used by \cite{repo}. Instead of using a CNN backbone for feature extraction, we experiment with a Transformer.}
+    \includegraphics[width=.5\textwidth]{encoder.png}
+    \caption{The architecture closely resembles the approach used by \cite{repo}. Instead of only using linear projections
+    in an embedding layer, we experiment with adding a Transformer encoder.}
     \label{fig:t_head}
 \end{figure}
 
@@ -110,19 +112,35 @@ To compare these two, we use the binary classifier head from \cite{repo} and pas
 \section{Experiments}
 
     
-Our models are trained for 300 epochs, with a batch size of 48, and with an initial learning rate of $0.0001$.
-We also employ a learning rate scheduler, which decreases the learning rate by a factor of $\frac{1}{2}$ every time there is a plateau in the GAP score.  
-The values for $\lambda$, $\lambda_\eta$, $\lambda_\rho$, and $\lambda_\Gamma$ are $1.0,0.1,1.0$ and $1.0$ respectively. These were empirically tested by \cite{ePill} and still used here.
-We conduct our experiments with
- either an Nvidia V100 or Nvidia RTX 3080 Ti GPU.
+Our best performing model is trained for 70 epochs and uses pretrained weights, trained on the original ePill architecture for 300 epochs. We train with a batch size of 48, 
+and with an initial learning rate of $0.0001$. We also employ a learning rate scheduler, which decreases the learning rate by a factor of $0.5$ 
+every time there is a plateau in the GAP score. The values for $\lambda$, $\lambda_\eta$, $\lambda_\rho$, and $\lambda_\Gamma$ are $1.0,0.1,1.0$ and $1.0$ 
+respectively. These were empirically tested by \cite{ePill} and still used here. We experimented with a variation of transformer heads and encoder layers and found that the best
+performance resulted when we used 4 transformer heads and 2 encoder layers.
+Our experiments were conducted with either an Nvidia V100 or Nvidia RTX 3080 Ti GPU.
+
+\subsubsection{Unsuccessful Experiments}
+Originally, our goal was to use a Transformer backbone in place of a CNN. We attempted to train our data using a ViT base-16 Transformer \cite{an_imageworth} 
+as the replacement for the CNN. We quickly found that our data was too small in size for an architecture of this nature, and shifted to a Swin v2 Tiny Transformer 
+\cite{swinv2}. After training with many different configurations, we found that the Swin v2 Tiny Transformer was not able to outperform the CNN backbone. We believe 
+this is due to the fact that the Swin v2 Tiny Transformer may not excel at learning local features in a few-shot setting, to the extent that CNNs like ResNet50
+or VGG would. 
+
+
+\section{Results}
+
+Let us review that global average precision (GAP) represents the performances in both precision and recall of a classifier as a single metric. The mean average precision 
+(MAP) is the average of the average precision scores for each class. The GAP@1 and MAP@1 metrics represent the top 1 predictions. 
 \\
 
-Originally, we attempted to train our data using a ViT base-16 Transformer \cite{an_imageworth}. We quickly found that our data was too small in size for an architecture of this nature, 
-and shifted to a Swin v2 Tiny Transformer \cite{swinv2}.
+The results shown in Table \ref{tab:results} show that when
+compared to the original proposed architecture, we outperform the model in both GAP metrics when employing a Transformer encoder in our embedding layer. Our configuration
+allows us to obtain a GAP score that is over 4\% higher and GAP@1 is over 6\% better. This improvement is likely due to the fact that the Transformer encoder is able to
+learn more complex relationships between the anchor and positive images, and thus is able to better compute the losses, resulting in better precision and recall scores. 
 
-\section{Preliminary Analysis}
-
-Compared to the results given in the paper this research is based on, our results fall behind in all of the metrics.   \par
+% The reason our extra layer of embedding improves learning, is likely due to the nature of the problem.  The embedding layer is comprised of two linear layers, 
+% one batch normalization layer after the first linear layer, a ReLU operation, and a final tanh activation. The non-linearity from this tanh activation allows 
+% us to model the complex relationship between anchor and positive images, helping us with computing our losses. 
 
 \begin{table}[h]
     \caption{* denotes the use of a pretrained model.  + denotes models which have an extra embedding layer added to the transformer output.}
@@ -133,29 +151,38 @@ Compared to the results given in the paper this research is based on, our result
     \multicolumn{5}{|c|}{\textbf{Multi-head Metric Learning: Both-sides input}}                                                      \\ \hline
     \multicolumn{1}{|c|}{ResNet50}    & \multicolumn{1}{c|}{58.75} & \multicolumn{1}{c|}{80.26} & \multicolumn{1}{c|}{83.51} & 74.28 \\ \hline
     \multicolumn{1}{|c|}{Swin\_v2 *+} & \multicolumn{1}{c|}{46.83} & \multicolumn{1}{c|}{71.54} & \multicolumn{1}{c|}{77.05} & 65.18 \\ \hline
-    \multicolumn{1}{|c|}{Swin-v2 *}   & \multicolumn{1}{c|}{42.70} & \multicolumn{1}{c|}{61.89} & \multicolumn{1}{c|}{73.36} & 58.95 \\ \hline
     \multicolumn{1}{|c|}{Swin\_v2 +}  & \multicolumn{1}{c|}{7.73}  & \multicolumn{1}{c|}{32.45} & \multicolumn{1}{c|}{28.67} & 15.65 \\ \hline
+    \multicolumn{1}{|c|}{Ours *+}   & \multicolumn{1}{c|}{\textbf{62.96}} & \multicolumn{1}{c|}{\textbf{86.59}} & \multicolumn{1}{c|}{83.56} & 73.96 \\ \hline
     \end{tabular}
     \label{tab:results}
 \end{table}
-Our results lead us to believe that the best configuration for Swin v2 Tiny is when we use both the pre-trained model, and add an extra layer of embedding.
-The reason our extra layer of embedding improves learning, is likely due to the nature of the problem.  The embedding layer is comprised of two linear layers, one batch normalization layer after the first linear layer, a ReLU operation, and a final tanh activation. 
-The non-linearity from this tanh activation allows us to model the complex relationship between anchor and positive images, helping us with computing our losses. 
-\\
+We can see from our results in Figure \ref{fig:loss_graphs} that the triplet, contrastive, and to a lesser extent the arcface loss, all lack stability. 
+We believe this is due to the nature few-shot classification, and at the time of writing this paper, using a transformer encoder to embed our features
+is our best performing approach. In the future, we would like to look into model-agnostic meta-learning (MAML) \cite{maml} and its variants, as well as 
+other few-shot learning methods, to see if these can improve our overall performance.
+% the losses for these two are measured similarly.  These both use a binary head classifier that measure euclidian distances between anchor, positive, and 
+% negative images (in the cases of the triplet loss). \cite{triplet}\cite{contrast} In the case of arcface, its loss decreased much slower 
+% than the rest of the losses, almost in a linear manner. The overall loss began at around $14$ and 
+% finished at around $4$. Finding a method which further improves the performance of both the contrastive and triplet
+% loss should help improve the overall loss and performance. 
 
-We can see from our results in Figure \ref{fig:loss_graphs} that the triplet and contrastive losses converge at around epoch $75$. We think this is because the losses for these two are measured similarly.  These both use a binary head classifier that
-measure euclidian distances between anchor, positive, and negative images (in the cases of the triplet loss). \cite{triplet}\cite{contrast} 
-In the case of arcface, its loss decreased much slower than the rest of the losses, almost in a linear manner. The overall loss began at around $14$ and finished at around $4$. Finding a method which further improves the performance of both the contrastive and triplet
-loss should help improve the overall loss and performance. 
+\section{Conclusion}
 
-
-\section{Future Plans}
-
-As shown above we currently achieve what we consider a sub-par accuracy for identification. As a result, we would like to look into methods that can improve the robustness of our apporach. One approach we are considering in the future is the usage of data augmentation. For this task we plan to use pre-existing solution called Cs$^2$. Cs$^2$ is an approach that uses generative models to create data augmentations to an already-existing dataset \cite{cs2}. By incorporating this into our current pipeline we hope that it can allow our model to train and see more variation which can hopefully result in overall better accuracies.  \par
+As shown above we currently achieve what we consider a sub-par accuracy for identification. As a result, we would like to look into methods that 
+can improve the robustness of our apporach. One approach we are considering in the future is the usage of data augmentation. For this task we 
+plan to use pre-existing solution called Cs$^2$. Cs$^2$ is an approach that uses generative models to create data augmentations to an 
+already-existing dataset \cite{cs2}. By incorporating this into our current pipeline we hope that it can allow our model to train and see 
+more variation which can hopefully result in overall better accuracies.  \par
 
 In addition to more powerful data augmentations, we also would like to look into improvements to training the SWIN model. This could involve the un-freezing of specific layers in order for the model to better fit the inputs. We may also investigate other models that may be applicable. This is an area we are actively looking into at the time of writing this. \par 
 
+{\small
+\bibliographystyle{unsrt}
+\bibliography{sample}
+}
+
 \newpage
+\section{Appendix}
 \onecolumn
 \begin{figure}[h!]
     \begin{tabular}{cc}
@@ -169,40 +196,5 @@ In addition to more powerful data augmentations, we also would like to look into
 \end{figure}
 \twocolumn
 
-% You should also include references to previous work.
-
-
-
-%\begin{figure*}
-%\begin{center}
-%\fbox{\rule{0pt}{2in} \rule{.9\linewidth}{0pt}}
-%%\includegraphics[width=0.8\linewidth]{figure2.pdf}
-%\end{center}
-%   \caption{Optional detailed illustration of your approach.}
-%\label{fig:fig2}
-%\end{figure*}
-
-% \begin{table}
-% \begin{center}
-% \begin{tabular}{c c}
-% \hline
-% Method & Accuracy \\
-% \hline
-% Theirs & 0.5 \\
-% Yours & 0.75\\
-% Ours & \bf 0.9 \\
-% \hline
-% \end{tabular}
-% \end{center}
-% \caption{Results for your milestone and final reports.}
-% \end{table}
-
-
-
-
-{\small
-\bibliographystyle{unsrt}
-\bibliography{sample}
-}
 
 \end{document}
