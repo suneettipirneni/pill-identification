@@ -119,7 +119,7 @@ respectively. These were empirically tested by \cite{ePill} and still used here.
 performance resulted when we used 4 transformer heads and 2 encoder layers.
 Our experiments were conducted with either an Nvidia V100 or Nvidia RTX 3080 Ti GPU.
 
-\subsubsection{Unsuccessful Experiments}
+\subsubsection{Unsuccessful Experiments}\label{sec:failed}
 Originally, our goal was to use a Transformer backbone in place of a CNN. We attempted to train our data using a ViT base-16 Transformer \cite{an_imageworth} 
 as the replacement for the CNN. We quickly found that our data was too small in size for an architecture of this nature, and shifted to a Swin v2 Tiny Transformer 
 \cite{swinv2}. After training with many different configurations, we found that the Swin v2 Tiny Transformer was not able to outperform the CNN backbone. We believe 
@@ -168,13 +168,14 @@ other few-shot learning methods, to see if these can improve our overall perform
 
 \section{Conclusion}
 
-As shown above we currently achieve what we consider a sub-par accuracy for identification. As a result, we would like to look into methods that 
-can improve the robustness of our apporach. One approach we are considering in the future is the usage of data augmentation. For this task we 
-plan to use pre-existing solution called Cs$^2$. Cs$^2$ is an approach that uses generative models to create data augmentations to an 
-already-existing dataset \cite{cs2}. By incorporating this into our current pipeline we hope that it can allow our model to train and see 
-more variation which can hopefully result in overall better accuracies.  \par
+As shown above we currently achieve what we consider a consistent accuracy for identification. As a result, there are most likely be methods using a completely different assumption that 
+can improve the robustness of our apporach.  \par
 
-In addition to more powerful data augmentations, we also would like to look into improvements to training the SWIN model. This could involve the un-freezing of specific layers in order for the model to better fit the inputs. We may also investigate other models that may be applicable. This is an area we are actively looking into at the time of writing this. \par 
+More specifically, further modifications to the original architecture will be needed. The model as provided make the assumption that a standard embedding layer is an MLP. However, in our case with the transformer, it would be preferable to do some kind of encoding that is specific to the mult-head trainer. Note while vision transformers and SWIN transformers do perform image-specific encoding, they cannot be used directly as per \ref{sec:failed}. We think our solution is a foundation for more work to implemented specific to pill identification.
+
+ \par
+
+
 
 {\small
 \bibliographystyle{unsrt}
